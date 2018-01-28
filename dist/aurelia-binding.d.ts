@@ -1,4 +1,4 @@
-import { Container } from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-dependency-injection';
 
 /**
  * The "parallel" or "artificial" aspect of the binding scope. Provides access to the parent binding
@@ -26,6 +26,17 @@ export declare interface Scope {
    */
   overrideContext: OverrideContext;
 }
+
+/**
+ * Gets the binding context for the specified property name by looking for the property
+ * on the scope.bindingContext, then on the scope.overrideContext before repeating on
+ * the ancestor scopes until the property is found. If the property is not found anywhere
+ * in the scope then the root binding context is returned.
+ * @param name The property name.
+ * @param scope The scope.
+ * @param ancestor The number of ancestor scopes to skip back to (used in $parent bindings).
+ */
+export declare function getContextFor(name: string, scope: Scope, ancestor?: number): any;
 
 /**
  * Provides a mechanism for releasing resources.
@@ -97,7 +108,7 @@ export declare enum delegationStrategy {
  * This is an internal API and is subject to change without notice in future releases.
  */
 export declare class EventManager {
-  registerElementConfig(config: { tagName: string; properties: { [propertyName: string]: string[] }; }): void;
+  registerElementConfig(config: { tagName: string; properties: { (s: string): string[] }; }): void;
   /**
    * Subscribes to specified event on the target element.
    * @param target Target element.
@@ -126,7 +137,28 @@ export declare interface CollectionObserver {
   /**
    * Subscribe to collection mutation events.
    */
-  subscribe(callback: (changeRecords: any) => void): Disposable;
+  subscribe(callback: (changeRecords: Array<ICollectionObserverSplice<any>>) => void): Disposable;
+}
+
+/**
+ * The change record of a collection mutation. 
+ */
+export declare interface ICollectionObserverSplice<T = any> {
+
+  /**
+   * Number of items added to the collection.
+   */
+  addedCount: number;
+
+  /**
+   * The position at which the items were added.
+   */
+  index: number;
+
+  /**
+   * A collection of items that were removed from the collection.
+   */
+  removed: Array<T>;
 }
 
 /**
@@ -395,7 +427,7 @@ export declare interface NameExpression {
 /**
  * An expression AST visitor.
  */
-export interface ExpressionVisitor { }
+export interface ExpressionVisitor {}
 
 /**
  * Visits an expression AST and returns the string equivalent.
@@ -407,7 +439,7 @@ export class Unparser implements ExpressionVisitor {
 /**
  * Clones an expression AST.
  */
-export class ExpressionCloner implements ExpressionVisitor { }
+export class ExpressionCloner implements ExpressionVisitor {}
 
 /**
  * Provides the base class from which the classes that represent expression tree nodes are derived.
